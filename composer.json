@@ -3,7 +3,6 @@
     "description": "Separates Laravel log files into a single file for each log level.",
     "version":"0.1",
     "keywords": ["logs", "log management", "multiple log files"],
-    "homepage":"",
     "license": "MIT",
     "authors": [
         {
@@ -23,5 +22,5 @@
         "psr-4": {
             "EpicLog\\": "src"
         }
-    },
+    }
 }
