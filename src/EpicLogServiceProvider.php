@@ -11,7 +11,7 @@ class EpicLogServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = false;
 
     /**
      * Bootstrap the application services.
@@ -21,10 +21,10 @@ class EpicLogServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/config/epiclog.php' => config_path('epiclog.php'),
+            __DIR__.'/config/epiclog.php' => config_path('epiclog.php')
         ], 'epiclog');
 
-        $epiclog = new EpicLog();
+        $epiclog = app()->make('EpicLog\EpicLog');
         $epiclog->init();
     }
 
@@ -35,6 +35,6 @@ class EpicLogServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+
     }
 }

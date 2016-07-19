@@ -22,57 +22,76 @@ class EpicLog
     private $levels;
 
     /**
-     * The log output format -- see Monolog documentation
-     * @var string
+     * Constructor
+     * @param LoggerInterface $log This is the Laravel/Lumen Monolog Interface
      */
-    private $outputFormat;
-
     public function __construct(LoggerInterface $log)
     {
-        // Assign the LoggerInterface
-        $this->monolog = $log;
+        // Get the Monolog Instance that Laravel/Lumen is using
+        $this->monolog = $log->getMonolog();
 
         // Setup Log levels according to RFC 5424
         $this->levels = [
-            'debug',
-            'info',
-            'notice',
-            'warning',
-            'error',
-            'critical',
-            'alert',
-            'emergency'
+            'debug' => Monolog::DEBUG,
+            'info' => Monolog::INFO,
+            'notice' => Monolog::NOTICE,
+            'warning' => Monolog::WARNING,
+            'error' => Monolog::ERROR,
+            'critical' => Monolog::CRITICAL,
+            'alert' => Monolog::ALERT,
+            'emergency' => Monolog::EMERGENCY
         ];
     }
 
+    /**
+     * Initializes Epic Log
+     *
+     * @return null
+     */
     public function init()
     {
         if (config('epiclog.separate_logs_by_level')) {
             // remove default Laravel/Lumen monolog handlers
-            $this->logger->popHandler();
+            $this->monolog->popHandler();
             // setup Logs by log level
-            $this->setupLogsByLevel();
+            $this->setupLogs();
         }
     }
 
+    /**
+     * Loops through each Log level defined in $this->levels and creates a StreamHandler class for it
+     *
+     * @return array of \Monolog\StreamHandler instances corresponding to each log level
+     */
     private function setupStreamHandlersByLevel()
     {
         $handlers = [];
-        foreach ($this->levels as $level) {
+        foreach ($this->levels as $level => $monologStatic) {
             $handlers[$level] = new StreamHandler(
                 storage_path("/logs/{$level}.log"),
-                Monolog::strtoupper($level),
+                $monologStatic,
                 false
             );
         }
         return $handlers;
     }
 
+    /**
+     * Returns a Monolog\LineFormatter Instance configured like Laravel's default
+     *
+     * @return Monolog\LineFormatter
+     */
     private function setupFormatter()
     {
-        return new LineFormatter($this->output);
+        return new LineFormatter(null, null, true, true);
     }
 
+    /**
+     * This function gets all Handlers and the Formatter and assigns them onto
+     * the underlying Monolog instance that Laravel uses.
+     *
+     * @return null
+     */
     public function setupLogs()
     {
         // Stream Handlers
@@ -85,7 +104,7 @@ class EpicLog
             // apply formatter to Stream
             $handler->setFormatter($formatter);
             // push Stream into Laravel Log Instance
-            $this->log->pushHandler($handler);
+            $this->monolog->pushHandler($handler);
         }
     }
 }
