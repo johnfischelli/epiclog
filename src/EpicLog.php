@@ -63,7 +63,15 @@ class EpicLog
             // remove default Laravel/Lumen monolog handlers
             $this->monolog->popHandler();
             // setup Logs by log level
-            $this->setupLogs();
+            $this->setupLogsByLevel();
+        }
+
+        if (config('epiclog.push_errors_to_stderr')) {
+            $this->setupStdErrHandler();
+        }
+
+        if (config('epiclog.push_logs_to_stdout')) {
+            $this->setupStdOutHandler();
         }
     }
 
@@ -73,7 +81,7 @@ class EpicLog
      *
      * @return null
      */
-    public function setupLogs()
+    public function setupLogsByLevel()
     {
         // Stream Handlers
         $handlers = $this->setupStreamHandlersByLevel();
@@ -148,5 +156,29 @@ class EpicLog
     private function setupFormatter()
     {
         return new LineFormatter(null, null, true, true);
+    }
+
+    /**
+     * Alters the Log facade to push error and above log levels to stderr
+     *
+     * @return null
+     */
+    private function setupStdErrHandler()
+    {
+        $handler = new StreamHandler("php://stderr", $this->levels['error'], true);
+        $handler->setFormatter($this->setupFormatter());
+        $this->monolog->pushHandler($handler);
+    }
+
+    /**
+     * Alters the Log facade to push debug and above log levels to stdout
+     *
+     * @return null
+     */
+    private function setupStdOutHandler()
+    {
+        $handler = new StreamHandler("php://stdout", $this->levels['debug'], true);
+        $handler->setFormatter($this->setupFormatter());
+        $this->monolog->pushHandler($handler);
     }
 }

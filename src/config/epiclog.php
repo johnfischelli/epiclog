@@ -20,6 +20,10 @@ return [
      */
     'rotate_log_by_level_num_days' => 5,
 
+    'push_errors_to_stderr' => true,
+    
+    'push_logs_to_stdout' => true,
+
     /**
      * Allows creation of custom logs
      */
