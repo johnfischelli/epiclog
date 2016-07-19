@@ -1,0 +1,27 @@
+{
+    "name": "johnfischelli/epiclog",
+    "description": "Separates Laravel log files into a single file for each log level.",
+    "version":"0.1",
+    "keywords": ["logs", "log management", "multiple log files"],
+    "homepage":"",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "John Fischelli",
+            "email": "john.fischelli@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": { 
+        "laravel/framework": "5.*",
+    },
+    "require-dev": {
+        "laravel/framework": "5.*",
+        "phpunit/phpunit": "4.7.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "EpicLog\\": "src"
+        }
+    },
+}
