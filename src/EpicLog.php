@@ -67,11 +67,18 @@ class EpicLog
         }
 
         if (config('epiclog.push_errors_to_stderr')) {
+            // push error logs and above to stderr
             $this->setupStdErrHandler();
         }
 
         if (config('epiclog.push_logs_to_stdout')) {
+            // push all logs to stdout
             $this->setupStdOutHandler();
+        }
+
+        $logs = config('epiclog.logs');
+        if (is_array($logs) && count($logs) > 1) {
+            $this->setupCustomLogs($logs);
         }
     }
 
@@ -180,5 +187,18 @@ class EpicLog
         $handler = new StreamHandler("php://stdout", $this->levels['debug'], true);
         $handler->setFormatter($this->setupFormatter());
         $this->monolog->pushHandler($handler);
+    }
+
+    /**
+     * Helper function that will take the epiclog configuration for custom logs
+     * and pass it down to the CustomLogs class - This class will setup a new monolog
+     * instance with new handlers, etc. This monolog instance can be accessed from the
+     * EpicLog facade.
+     *
+     * @param  array  $logs array representing data of custom logs to create
+     */
+    private function setupCustomLogs(array $logs)
+    {
+        app()['epiclog']->setupCustomLogs($logs);
     }
 }

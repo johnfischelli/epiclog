@@ -24,6 +24,10 @@ class EpicLogServiceProvider extends ServiceProvider
             __DIR__.'/config/epiclog.php' => config_path('epiclog.php')
         ], 'epiclog');
 
+        app()->bind('epiclog', function () {
+            return new \EpicLog\CustomLogs;
+        });
+
         $epiclog = app()->make('EpicLog\EpicLog');
         $epiclog->init();
     }
