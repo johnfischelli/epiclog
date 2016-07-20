@@ -78,7 +78,9 @@ class EpicLog
         // actually alters the Log facade
         // depending on configuration settings, logs would now be configured by level
         // and could also potentially push log messages to stderr or stdout
-        $this->setupLogs();
+        if (is_array($this->handlers)) {
+            $this->setupLogs();
+        }
 
         // if custom logs are in the configuration, let's go ahead and create them.
         $logs = config('epiclog.logs');
