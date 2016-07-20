@@ -80,6 +80,7 @@ class EpicLog
         // and could also potentially push log messages to stderr or stdout
         $this->setupLogs();
 
+        // if custom logs are in the configuration, let's go ahead and create them.
         $logs = config('epiclog.logs');
         if (is_array($logs) && count($logs) >= 1) {
             $this->setupCustomLogs($logs);
@@ -147,7 +148,7 @@ class EpicLog
      * Helper function that will take the epiclog configuration for custom logs
      * and pass it down to the CustomLogs class - This class will setup a new monolog
      * instance with new handlers, etc. This monolog instance can be accessed from the
-     * EpicLog facade.
+     * Epiclog facade.
      *
      * @param  array  $logs array representing data of custom logs to create
      */
