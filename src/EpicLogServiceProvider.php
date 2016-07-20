@@ -24,10 +24,12 @@ class EpicLogServiceProvider extends ServiceProvider
             __DIR__.'/config/epiclog.php' => config_path('epiclog.php')
         ], 'epiclog');
 
-        app()->bind('epiclog', function () {
-            return new \EpicLog\CustomLogger;
+        // bind the Custom Logger as a singleton, so our custom channels are preserved
+        app()->singleton('epiclog', function ($app) {
+            return $app->make('EpicLog\CustomLogger');
         });
 
+        // boot up epiclog and initialize
         $epiclog = app()->make('EpicLog\EpicLog');
         $epiclog->init();
     }

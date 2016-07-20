@@ -22,16 +22,17 @@ class EpicLog
     private $monolog;
 
     /**
-     * An Array containing the log levels
-     * @var array
-     */
-    private $levels;
-
-    /**
      * An Array holding Handlers to be setup
      * @var [type]
      */
     private $handlers;
+
+    /**
+     * Contains helper methods for interacting with Monolog
+     *
+     * @var EpicLog\Helper
+     */
+    private $helper;
 
     /**
      * Constructor
@@ -45,18 +46,6 @@ class EpicLog
     {
         // Get the Monolog Instance that Laravel/Lumen is using
         $this->monolog = $log->getMonolog();
-
-        // Setup Log levels according to RFC 5424
-        $this->levels = [
-            'debug' => Monolog::DEBUG,
-            'info' => Monolog::INFO,
-            'notice' => Monolog::NOTICE,
-            'warning' => Monolog::WARNING,
-            'error' => Monolog::ERROR,
-            'critical' => Monolog::CRITICAL,
-            'alert' => Monolog::ALERT,
-            'emergency' => Monolog::EMERGENCY
-        ];
 
         // injected Helper instance
         $this->helper = $helper;
@@ -92,7 +81,7 @@ class EpicLog
         $this->setupLogs();
 
         $logs = config('epiclog.logs');
-        if (is_array($logs) && count($logs) > 1) {
+        if (is_array($logs) && count($logs) >= 1) {
             $this->setupCustomLogs($logs);
         }
     }
@@ -104,7 +93,7 @@ class EpicLog
      */
     private function setupStreamHandlersByLevel()
     {
-        foreach ($this->levels as $name => $monologStatic) {
+        foreach ($this->helper->levels as $name => $monologStatic) {
             if (config('epiclog.rotate_log_by_level')) {
                 $this->handlers[] = $this->helper->setupRotatingLog($name, $monologStatic);
             } else {
@@ -165,5 +154,6 @@ class EpicLog
     private function setupCustomLogs(array $logs)
     {
         $instance = app()['epiclog'];
+        $instance->setupChannels($logs);
     }
 }
