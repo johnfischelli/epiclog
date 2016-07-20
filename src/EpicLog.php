@@ -28,13 +28,20 @@ class EpicLog
     private $levels;
 
     /**
+     * An Array holding Handlers to be setup
+     * @var [type]
+     */
+    private $handlers;
+
+    /**
      * Constructor
      * The LoggerInterface is injected by the container.
      * It is the Monolog instance boostratpped by the Laravel/Lumen framework.
      *
-     * @param Psr\Log\LoggerInterface $log
+     * @param \Psr\Log\LoggerInterface  $log
+     * @param \EpicLog\helper           $helper
      */
-    public function __construct(LoggerInterface $log)
+    public function __construct(LoggerInterface $log, Helper $helper)
     {
         // Get the Monolog Instance that Laravel/Lumen is using
         $this->monolog = $log->getMonolog();
@@ -50,6 +57,9 @@ class EpicLog
             'alert' => Monolog::ALERT,
             'emergency' => Monolog::EMERGENCY
         ];
+
+        // injected Helper instance
+        $this->helper = $helper;
     }
 
     /**
@@ -62,8 +72,8 @@ class EpicLog
         if (config('epiclog.separate_logs_by_level')) {
             // remove default Laravel/Lumen monolog handlers
             $this->monolog->popHandler();
-            // setup Logs by log level
-            $this->setupLogsByLevel();
+            // setup handlers by log level
+            $this->setupStreamHandlersByLevel();
         }
 
         if (config('epiclog.push_errors_to_stderr')) {
@@ -76,10 +86,53 @@ class EpicLog
             $this->setupStdOutHandler();
         }
 
+        // actually alters the Log facade
+        // depending on configuration settings, logs would now be configured by level
+        // and could also potentially push log messages to stderr or stdout
+        $this->setupLogs();
+
         $logs = config('epiclog.logs');
         if (is_array($logs) && count($logs) > 1) {
             $this->setupCustomLogs($logs);
         }
+    }
+
+    /**
+     * Loops through each Log level defined in $this->levels and creates a StreamHandler class for it
+     *
+     * @return null
+     */
+    private function setupStreamHandlersByLevel()
+    {
+        foreach ($this->levels as $name => $monologStatic) {
+            if (config('epiclog.rotate_log_by_level')) {
+                $this->handlers[] = $this->helper->setupRotatingLog($name, $monologStatic);
+            } else {
+                $this->handlers[] = $this->helper->setupNormalLog($name, $monologStatic);
+            }
+        }
+    }
+
+    /**
+     * Proxy function that will use the Helper class to setup a StreamHandler to
+     * write logs to stdout. Sets this StreamHandler to this class' $handlers array
+     *
+     * @return null
+     */
+    public function setupStdOutHandler()
+    {
+        $this->handlers[] = $this->helper->setupStdOutHandler();
+    }
+
+    /**
+     * Proxy function that will use the Helper class to setup a StreamHandler to
+     * write logs to stderr. Sets this StreamHandler to this class' $handlers array
+     *
+     * @return null
+     */
+    public function setupStdErrHandler()
+    {
+        $this->handlers[] = $this->helper->setupStdErrHandler();
     }
 
     /**
@@ -88,105 +141,17 @@ class EpicLog
      *
      * @return null
      */
-    public function setupLogsByLevel()
+    public function setupLogs()
     {
-        // Stream Handlers
-        $handlers = $this->setupStreamHandlersByLevel();
-
         // setup Formatter
-        $formatter = $this->setupFormatter();
+        $formatter = $this->helper->setupFormatter();
 
-        foreach ($handlers as $handler) {
+        foreach ($this->handlers as $handler) {
             // apply formatter to Stream
             $handler->setFormatter($formatter);
             // push Stream into Laravel Log Instance
             $this->monolog->pushHandler($handler);
         }
-    }
-
-    /**
-     * Loops through each Log level defined in $this->levels and creates a StreamHandler class for it
-     *
-     * @return array of \Monolog\StreamHandler instances corresponding to each log level
-     */
-    private function setupStreamHandlersByLevel()
-    {
-        $handlers = [];
-        foreach ($this->levels as $level => $monologStatic) {
-            if (config('epiclog.rotate_log_by_level')) {
-                $handlers[$level] = $this->setupRotatingLog($level, $monologStatic);
-            } else {
-                $handlers[$level] = $this->setupNormalLog($level, $monologStatic);
-            }
-        }
-        return $handlers;
-    }
-
-    /**
-     * Setups a rotating StreamHandler for a log.
-     *
-     * @param  string $level         key of the array $this->levels - will be the log filename.
-     * @param  const $monologStatic  log level (RFC 5424)
-     * @return \Monolog\StreamHandler
-     */
-    private function setupRotatingLog($level, $monologStatic)
-    {
-        return new RotatingFileHandler(
-            storage_path("/logs/{$level}.log"),
-            config('epiclog.rotate_log_by_level_num_days'),
-            $monologStatic,
-            false
-        );
-    }
-
-    /**
-     * Setups a normal StreamHandler for a log.
-     *
-     * @param  string $level         key of the array $this->levels - will be the log filename.
-     * @param  const $monologStatic  log level (RFC 5424)
-     * @return \Monolog\StreamHandler
-     */
-    private function setupNormalLog($level, $monologStatic)
-    {
-        return new StreamHandler(
-            storage_path("/logs/{$level}.log"),
-            $monologStatic,
-            false
-        );
-    }
-
-    /**
-     * Returns a Monolog\LineFormatter Instance configured like Laravel's default
-     *
-     * @return Monolog\LineFormatter
-     */
-    private function setupFormatter()
-    {
-        return new LineFormatter(null, null, true, true);
-    }
-
-    /**
-     * Alters the Log facade to push error and above log levels to stderr
-     *
-     * @return null
-     */
-    private function setupStdErrHandler()
-    {
-        $handler = new StreamHandler("php://stderr", $this->levels['error'], true);
-        $handler->setFormatter($this->setupFormatter());
-        $this->monolog->pushHandler($handler);
-    }
-
-    /**
-     * Alters the Log facade to push debug and above log levels to stdout
-     *
-     * @return null
-     */
-    private function setupStdOutHandler()
-    {
-        $handler = new StreamHandler("php://stdout", $this->levels['debug'], true);
-        $handler->setFormatter($this->setupFormatter());
-        $this->monolog->pushHandler($handler);
     }
 
     /**
@@ -199,6 +164,6 @@ class EpicLog
      */
     private function setupCustomLogs(array $logs)
     {
-        app()['epiclog']->setupCustomLogs($logs);
+        $instance = app()['epiclog'];
     }
 }

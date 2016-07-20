@@ -25,7 +25,7 @@ class EpicLogServiceProvider extends ServiceProvider
         ], 'epiclog');
 
         app()->bind('epiclog', function () {
-            return new \EpicLog\CustomLogs;
+            return new \EpicLog\CustomLogger;
         });
 
         $epiclog = app()->make('EpicLog\EpicLog');

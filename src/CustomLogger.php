@@ -3,8 +3,11 @@
 namespace EpicLog;
 
 use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Formatter\LineFormatter;
 
-class CustomLogs
+class CustomLogger
 {
     private $channels;
 
@@ -14,13 +17,15 @@ class CustomLogs
     }
 
     /**
-     * [setupLoggers description]
+     * [setupChannels description]
      * @param  array  $logs [description]
      * @return [type]       [description]
      */
-    public function setupLoggers(array $logs)
+    public function setupChannels(array $logs)
     {
-
+        foreach ($logs as $log) {
+            
+        }
     }
 
     /**
