@@ -15,7 +15,6 @@
         "laravel/framework": "5.*"
     },
     "require-dev": {
-        "laravel/framework": "5.*",
         "phpunit/phpunit": "4.7.*"
     },
     "autoload": {
