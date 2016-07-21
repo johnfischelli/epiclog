@@ -58,4 +58,25 @@ class HelperUnitTest extends TestingBase
         $result = $this->helper->setupStdOutHandler();
         $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $result);
     }
+
+    /** @test */
+    public function setupFormatterReturnsLineFormatterClass()
+    {
+        $result = $this->helper->setupFormatter();
+        $this->assertInstanceOf('\Monolog\Formatter\LineFormatter', $result);
+    }
+
+    /** @test */
+    public function getMonologReturnsMonologConst()
+    {
+        $result = $this->helper->getMonologLevel('error');
+        $this->assertEquals($result, 400);
+    }
+
+    /** @test */
+    public function getMonologReturnsDebugMonologConstByDefault()
+    {
+        $result = $this->helper->getMonologLevel('not-a-log-level');
+        $this->assertEquals($result, 100);
+    }
 }
