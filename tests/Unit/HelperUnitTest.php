@@ -6,36 +6,56 @@ use EpicLog\Tests\TestingBase;
 
 class HelperUnitTest extends TestingBase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        $this->helper = new \EpicLog\Helper();
+    }
+
+    /** @test */
+    public function canBootUpHelperClass()
+    {
+        $this->assertInstanceOf('\EpicLog\Helper', $this->helper);
+    }
+
     /** @test */
     public function setupRotatingLogReturnsRotatingFileHandlerClass()
     {
-        $helper = new \EpicLog\Helper();
-        
-        $result = $helper->setupRotatingLog('myTestLog', $helper->levels['debug']);
+        $result = $this->helper->setupRotatingLog('myTestLog', $this->helper->levels['debug']);
         $this->assertInstanceOf('\Monolog\Handler\RotatingFileHandler', $result);
     }
 
     /** @test */
     public function setupNormalLogReturnsStreamHandlerClass()
     {
-        $helper = new \EpicLog\Helper();
-        
-        $result = $helper->setupRotatingLog('myTestLog', $helper->levels['debug']);
+        $result = $this->helper->setupRotatingLog('myTestLog', $this->helper->levels['debug']);
         $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $result);
     }
 
     /** @test */
     public function setupLogByConfigReturnsStreamHandlerClass()
     {
-        $helper = new \EpicLog\Helper();
-
         $config = [
             'name' => 'myTestLog'
         ];
 
-        $config = array_merge($helper->defaultConfig, $config);
+        $config = array_merge($this->helper->defaultConfig, $config);
         
-        $result = $helper->setupLogByConfig($config);
+        $result = $this->helper->setupLogByConfig($config);
+        $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $result);
+    }
+
+    /** @test */
+    public function setupStdErrHandlerReturnsStreamHandlerClass()
+    {
+        $result = $this->helper->setupStdErrHandler();
+        $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $result);
+    }
+
+    /** @test */
+    public function setupStdOutHandlerReturnsStreamHandlerClass()
+    {
+        $result = $this->helper->setupStdOutHandler();
         $this->assertInstanceOf('\Monolog\Handler\StreamHandler', $result);
     }
 }

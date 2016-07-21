@@ -6,6 +6,12 @@ use Illuminate\Foundation\Testing\TestCase;
 
 class TestingBase extends TestCase
 {
+
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    
     /**
      * Boots the application.
      *
