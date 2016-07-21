@@ -15,6 +15,15 @@ class Helper
      */
     public $levels;
 
+    /**
+     * Default Configuration for a custom log
+     * Gets merged and overwritten with config defined
+     * in config/epiclog.php
+     *
+     * @var array
+     */
+    public $defaultConfig;
+
     public function __construct()
     {
         // Setup Log levels according to RFC 5424
@@ -27,6 +36,15 @@ class Helper
             'critical' => Monolog::CRITICAL,
             'alert' => Monolog::ALERT,
             'emergency' => Monolog::EMERGENCY
+        ];
+
+        // setup default config
+        $this->defaultConfig = [
+            'location' => storage_path("logs/epiclog.log"),
+            'level' => 'debug',
+            'rotate' => false,
+            'num_days' => 5,
+            'bubbles' => false
         ];
     }
 

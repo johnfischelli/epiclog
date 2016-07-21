@@ -15,15 +15,6 @@ class CustomLogger
     private $channels;
 
     /**
-     * Default Configuration for a custom log
-     * Gets merged and overwritten with config defined
-     * in config/epiclog.php
-     *
-     * @var array
-     */
-    private $defaultConfig;
-
-    /**
      * Contains helper methods for interacting with Monolog
      *
      * @var EpicLog\Helper
@@ -38,14 +29,6 @@ class CustomLogger
     public function __construct(Helper $helper)
     {
         $this->channels = [];
-
-        $this->defaultConfig = [
-            'location' => storage_path("logs/epiclog.log"),
-            'level' => 'debug',
-            'rotate' => false,
-            'num_days' => 5,
-            'bubbles' => false
-        ];
 
         $this->helper = $helper;
     }
@@ -66,7 +49,7 @@ class CustomLogger
             // generate a handler class from the configuration array
             $handler = $this->helper->setupLogByConfig(
                 array_merge(
-                    $this->defaultConfig,
+                    $this->helper->defaultConfig,
                     $config
                 )
             );
