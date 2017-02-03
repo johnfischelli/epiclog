@@ -49,6 +49,9 @@ class EpicLog
 
         // injected Helper instance
         $this->helper = $helper;
+
+        // define an empty array to hold handlers
+        $this->handlers = [];
     }
 
     /**
