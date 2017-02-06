@@ -26,7 +26,7 @@ class CustomLogger
     /**
      * Contains helper methods for interacting with Monolog
      *
-     * @var EpicLog\Helper
+     * @var Helper
      */
     private $helper;
 

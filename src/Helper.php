@@ -35,7 +35,7 @@ class Helper
      *
      * @param  string $filename         the log filename.
      * @param  const $level             log level (RFC 5424)
-     * @return \Monolog\StreamHandler
+     * @return \Monolog\Handler\StreamHandler
      */
     public function setupRotatingLog($filename, $level)
     {
@@ -52,7 +52,7 @@ class Helper
      *
      * @param  string $filename         the log filename.
      * @param  const $level             log level (RFC 5424)
-     * @return \Monolog\StreamHandler
+     * @return \Monolog\Handler\StreamHandler
      */
     public function setupNormalLog($filename, $level)
     {
@@ -92,7 +92,7 @@ class Helper
     /**
      * Returns a StreamHandler that pushes messages to stderr
      *
-     * @return \Monolog\StreamHandler
+     * @return \Monolog\Handler\StreamHandler
      */
     public function setupStdErrHandler()
     {
@@ -102,7 +102,7 @@ class Helper
     /**
      * Returns a StreamHandler that pushes messages to stdout
      *
-     * @return \Monolog\StreamHandler
+     * @return \Monolog\Handler\StreamHandler
      */
     public function setupStdOutHandler()
     {
@@ -112,7 +112,7 @@ class Helper
     /**
      * Returns a Monolog\LineFormatter Instance configured like Laravel's default
      *
-     * @return Monolog\LineFormatter
+     * @return \Monolog\Formatter\LineFormatter
      */
     public function setupFormatter()
     {
