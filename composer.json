@@ -11,8 +11,8 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": { 
-        "laravel/framework": "5.*",
+    "require": {
+        "illuminate/log": "5.*",
         "monolog/monolog": "~1.11"
     },
     "require-dev": {

@@ -21,24 +21,50 @@ There are simple configuration flags which will allow you to send all error leve
 
 ## Installation
 
-#### With Composer
-
-Add this to your `composer.json`
+Installation differs slightly, depending on your framework (Laravel or Lumen). Please note the differences in each step.
+Begin by adding this to your `composer.json`
 
 ```
 "johnfischelli/epiclog": "dev-master"
 ```
+Run `composer update`
+
 #### Add the Service Provider
 
-After running `composer update` open up your `config/app.php` file and add `EpicLog\EpicLogServiceProvider::class` to your `providers` array.
+##### Laravel
+
+Open up your `config/app.php` file and add `EpicLog\EpicLogServiceProvider::class` to your `providers` array.
+
+##### Lumen
+
+Open up your `bootstrap/app.php` file and add the following in your Providers section:
+``` 
+$app->register(EpicLog\EpicLogServiceProvider::class);
+```
+
 
 #### Add the Facade Alias
+
+##### Laravel
+
 Add `'EpicLog' => EpicLog\EpicLogFacade::class` to your `aliases` array, also in `config/app.php`.
 
+##### Lumen
+
+Also in `bootstrap/app.php` add the following anywhere before "loading the application routes":
+```
+class_alias(EpicLog\EpicLogFacade::class, 'EpicLog');
+```
+
 #### Publish the Configuration
+
+##### Laravel
 `php artisan vendor:publish`
 
-Open up `config/epiclog.php` and set whatever configuration options you like.
+##### Lumen
+Manually copy the EpicLog config file `epiclog.php` from the vendor source to your Lumen config directory.
+
+In either case, open `config/epiclog.php` and set whatever configuration options you like.
 
 ## Configuration
 

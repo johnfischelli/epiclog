@@ -34,7 +34,7 @@ class EpicLog
     /**
      * Constructor
      * The LoggerInterface is injected by the container.
-     * It is the Monolog instance boostratpped by the Laravel/Lumen framework.
+     * It is the Monolog instance bootstrapped by the Laravel/Lumen framework.
      *
      * @param \Psr\Log\LoggerInterface  $log
      * @param \EpicLog\helper           $helper
