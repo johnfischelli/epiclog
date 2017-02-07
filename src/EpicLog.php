@@ -2,11 +2,8 @@
 
 namespace EpicLog;
 
+use Monolog\Logger;
 use Psr\Log\LoggerInterface;
-use Monolog\Logger as Monolog;
-use Monolog\Handler\StreamHandler;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Formatter\LineFormatter;
 
 /**
  * EpicLog - Advanced Monolog configuration for Laravel/Lumen
@@ -30,22 +27,26 @@ class EpicLog
     /**
      * Contains helper methods for interacting with Monolog
      *
-     * @var EpicLog\Helper
+     * @var Helper
      */
     private $helper;
 
     /**
      * Constructor
      * The LoggerInterface is injected by the container.
-     * It is the Monolog instance boostratpped by the Laravel/Lumen framework.
+     * It is the Monolog instance bootstrapped by the Laravel/Lumen framework.
      *
      * @param \Psr\Log\LoggerInterface  $log
      * @param \EpicLog\helper           $helper
      */
     public function __construct(LoggerInterface $log, Helper $helper)
     {
-        // Get the Monolog Instance that Laravel/Lumen is using
-        $this->monolog = $log->getMonolog();
+        // Log will either be Logger or Laravel Writer
+        if (get_class($log) != Logger::class) {
+            // Get the Monolog Instance that Laravel is using
+            $log = $log->getMonolog();
+        }
+        $this->monolog = $log;
 
         // injected Helper instance
         $this->helper = $helper;
