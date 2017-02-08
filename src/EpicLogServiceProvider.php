@@ -21,7 +21,7 @@ class EpicLogServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/config/epiclog.php' => config_path('epiclog.php')
+            __DIR__.'/config/epiclog.php' => app()->make('path.config') . DIRECTORY_SEPARATOR . 'epiclog.php'
         ], 'epiclog');
 
         // bind the Custom Logger as a singleton, so our custom channels are preserved
