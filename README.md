@@ -64,6 +64,18 @@ class_alias(EpicLog\EpicLogFacade::class, 'EpicLog');
 ##### Lumen
 Manually copy the EpicLog config file `epiclog.php` from the vendor source to your Lumen config directory.
 
+Additionally, because Lumen uses `.env` file for storing configuration, you will need to manually load the EpicLog config.
+Add the following to `bootstrap/app.php` anywhere after `$app` is created.  For example:
+```
+$app = new Laravel\Lumen\Application(
+    realpath(__DIR__.'/../')
+);
+
+$app->configure('epiclog');
+
+```
+
+##### Finally...
 In either case, open `config/epiclog.php` and set whatever configuration options you like.
 
 ## Configuration
