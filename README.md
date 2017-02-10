@@ -21,62 +21,60 @@ There are simple configuration flags which will allow you to send all error leve
 
 ## Installation
 
-Installation differs slightly, depending on your framework (Laravel or Lumen). Please note the differences in each step.
-Begin by adding this to your `composer.json`
+Installation differs slightly, depending on your framework (Laravel or Lumen). Begin by adding this to your `composer.json`
 
 ```
 "johnfischelli/epiclog": "dev-master"
 ```
 Run `composer update`
 
-#### Add the Service Provider
+Continue with the following steps, depending on your framework.
 
-##### Laravel
+#### Laravel
+1. **Add the Service Provider and Facade**
+    
+    Open up your `config/app.php` file and make the following changes:
+    * Add `EpicLog\EpicLogServiceProvider::class` to the `providers` array
+    * Add `'EpicLog' => EpicLog\EpicLogFacade::class` to the `aliases` array
 
-Open up your `config/app.php` file and add `EpicLog\EpicLogServiceProvider::class` to your `providers` array.
+2. **Publish**
 
-##### Lumen
+    `php artisan vendor:publish`
 
-Open up your `bootstrap/app.php` file and add the following in your Providers section:
+3. **Configure**
+
+    Open `config/epiclog.php` and set whatever configuration options you like.
+
+#### Lumen
+1. **Add the Service Provider and Facade**
+
+    Open up your `bootstrap/app.php` file and add the following lines of code:
 ``` 
-$app->register(EpicLog\EpicLogServiceProvider::class);
+    // Add to Providers section
+    $app->register(EpicLog\EpicLogServiceProvider::class);
+    
+    // Add after Providers section
+    class_alias(EpicLog\EpicLogFacade::class, 'EpicLog');
 ```
+2. **Publish**
 
+    Manually copy the EpicLog config file `epiclog.php` from the vendor source to your Lumen config directory.
 
-#### Add the Facade Alias
-
-##### Laravel
-
-Add `'EpicLog' => EpicLog\EpicLogFacade::class` to your `aliases` array, also in `config/app.php`.
-
-##### Lumen
-
-Also in `bootstrap/app.php` add the following anywhere before "loading the application routes":
-```
-class_alias(EpicLog\EpicLogFacade::class, 'EpicLog');
-```
-
-#### Publish the Configuration
-
-##### Laravel
-`php artisan vendor:publish`
-
-##### Lumen
-Manually copy the EpicLog config file `epiclog.php` from the vendor source to your Lumen config directory.
-
-Additionally, because Lumen uses `.env` file for storing configuration, you will need to manually load the EpicLog config.
+    Additionally, because Lumen uses `.env` file for storing configuration, you will need to manually load the EpicLog config.
 Add the following to `bootstrap/app.php` anywhere after `$app` is created.  For example:
 ```
-$app = new Laravel\Lumen\Application(
-    realpath(__DIR__.'/../')
-);
+    $app = new Laravel\Lumen\Application(
+        realpath(__DIR__.'/../')
+    );
 
-$app->configure('epiclog');
-
+    // ADD THIS
+    $app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
+    $app->configure('epiclog');
 ```
 
-##### Finally...
-In either case, open `config/epiclog.php` and set whatever configuration options you like.
+3. **Configure**
+
+    Open `config/epiclog.php` and set whatever configuration options you like.
 
 ## Configuration
 
