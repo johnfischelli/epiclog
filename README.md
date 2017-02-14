@@ -54,7 +54,9 @@ Continue with the following steps, depending on your framework.
     $app->register(EpicLog\EpicLogServiceProvider::class);
     
     // Add after Providers section
-    class_alias(EpicLog\EpicLogFacade::class, 'EpicLog');
+    if (!class_exists('EpicLog') {
+        class_alias(EpicLog\EpicLogFacade::class, 'EpicLog');
+    }
 ```
 2. **Publish**
 
