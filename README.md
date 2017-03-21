@@ -54,7 +54,7 @@ Continue with the following steps, depending on your framework.
     $app->register(EpicLog\EpicLogServiceProvider::class);
     
     // Add after Providers section
-    if (!class_exists('EpicLog') {
+    if (!class_exists('EpicLog')) {
         class_alias(EpicLog\EpicLogFacade::class, 'EpicLog');
     }
 ```

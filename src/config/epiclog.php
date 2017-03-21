@@ -35,6 +35,16 @@ return [
     'push_logs_to_stdout' => false,
 
     /**
+     * Set custom log format
+     */
+    'line_formatter_template' => '',
+
+    /**
+     * Set datetime format
+     */
+    'datetime_format' => '',
+
+    /**
      * Allows creation of custom logs.
      *
      * All settings except 'name' are optional. Here are the default settings

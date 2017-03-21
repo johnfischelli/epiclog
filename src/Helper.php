@@ -116,7 +116,9 @@ class Helper
      */
     public function setupFormatter()
     {
-        return new LineFormatter(null, null, true, true);
+        $format = config('epiclog.line_formatter_template') ?: null;
+        $datetimeFormat = config('epiclog.datetime_format') ?: null;
+        return new LineFormatter($format, $datetimeFormat, true, true);
     }
 
     /**
