@@ -15,6 +15,14 @@ class CustomLogger
     private $channels;
 
     /**
+     * Holds all the logs' configurations from
+     * config/epiclog.php
+     *
+     * @var array
+     */
+    private $config;
+
+    /**
      * Default Configuration for a custom log
      * Gets merged and overwritten with config defined
      * in config/epiclog.php
@@ -81,6 +89,8 @@ class CustomLogger
 
             // save the channel so that we can access it later
             $this->channels[$config['name']] = $logger;
+            // save the config so that we can access it to get the log level by config name later.
+            $this->config[$config['name']] = $config;
         }
     }
 
@@ -94,9 +104,10 @@ class CustomLogger
     {
         if (isset($this->channels[$name])) {
             $logger = $this->channels[$name];
-            $logger->addInfo($arguments[0], $arguments[1]);
-        }
+            $config = $this->config[$name];
 
+            $logger->addRecord($this->helper->getMonologLevel($config['level']), $arguments[0], ($arguments[1] ?? []));
+        }
         // throw exception optionally
         return false;
     }
